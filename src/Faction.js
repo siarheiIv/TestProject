@@ -8,17 +8,23 @@ class Faction extends React.Component{
       isActive: false,
     }
   }
+
   handleClick = () => {
-    this.setState({isActive: !this.state.isActive});
-  } 
+    this.setState(prevState => ({isActive: !prevState.isActive}));
+  }
+  
   render() {
     return(
       <>
         <button className="accordion" onClick={this.handleClick}>{this.props.name}</button>
         {this.state.isActive ? 
-          <div className='active'>
-            <Description factions={this.props}/>
-          </div> : null }
+          (
+            <div className='active'>
+              <Description factions={this.props}/>
+            </div>
+          ) : 
+            null
+        }
     </>
     )
   } 

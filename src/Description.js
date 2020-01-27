@@ -7,22 +7,28 @@ class Description extends React.Component {
     super(props);
     this.state = {
       solarSystem: '',
-      corporation: '',
+      corporation: {
+        name: '',
+      },
       showModal: false,
     }
   }
   
   async componentDidMount() {
-    const {solar_system_id} = this.props.factions;
+
+    // setState to be invoked once
+    const {solar_system_id, corporation_id} = this.props.factions;
     const {data: solarSystem} = await axios(`https://esi.evetech.net/latest/universe/systems/${solar_system_id}`);
-    this.setState({solarSystem: solarSystem.name});
-    
-    const {corporation_id} = this.props.factions;
     const {data: corporation} = await axios(`https://esi.evetech.net/latest/corporations/${corporation_id}`);
-    this.setState({corporation});
+    
+    this.setState({
+      solarSystem: solarSystem.name,
+      corporation,
+    });
   }
 
   handleClick = () => {
+    // it's better to use a callback in setState
     this.setState({showModal: !this.state.showModal});
   }
 
@@ -34,7 +40,8 @@ class Description extends React.Component {
       <>
         <p>{description}</p>
         <p>{solarSystem}</p>
-        <a onClick={this.handleClick} className='link'>{corporation.name}</a>
+        {/* Corporation can be null - the program will crash */}
+        <a onClick={this.handleClick} className='link'>{corporation ? corporation.name : 'N/A'}</a>
         {showModal ? <CorporationModal handleClick={this.handleClick} {...corporation} /> : null}
       </>
     )

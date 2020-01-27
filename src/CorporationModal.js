@@ -21,21 +21,26 @@ class Corporation extends React.Component {
   }
 
   convertBirthday = (birthday) => {
+    // Method is irrelevant to the component
+    // You could get and return the first item by index
     return birthday.split('T').slice(0, 1); 
   }
 
   changeSlide = () => {
+    // Only forward movement is available
     this.setState({selectedItem: this.state.selectedItem + 1});
   }
 
   closeModal = (e) => {
+    // a little overkill
     e.target === this.overlay && this.props.handleClick();
   }
     
   render() {
     return(
       <>
-        <div className='modal-overlay' onClick={this.closeModal} ref={node => {this.overlay = node}} >
+      {/* Why use ref here? */}
+        <div className='modal-overlay' onClick={this.closeModal} >
           <div className='modal'>
             <Carousel showThumbs={false} selectedItem={this.state.selectedItem}>
               <div className='modal-content'>
