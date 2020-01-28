@@ -20,6 +20,7 @@ class Search extends React.Component {
     }
   }
 
+  // methods can be combined
   getCategory = (e) => {
     this.setState({category: e.target.value}); 
   }
@@ -55,6 +56,8 @@ class Search extends React.Component {
       const {category, query} = this.state;
       axios(`${uri}search?categories=${category}&search=${query}`)
         .then(response => {this.setState({searchResults: response.data[`${category}`]})})
+
+        // That's not a promise, no use to resolve
         .then(() => this.getSearchMethod(category))
         .then(() => this.setState({isSubmitted: !this.state.isSubmitted})); 
       }  
@@ -85,11 +88,14 @@ class Search extends React.Component {
   }
   getSearchCategoryFirst = (category) => {
     let promises = [];
+    // It's always TRUE
     if(this.state.searchResults) {
     this.state.searchResults.forEach((elem) => {
       promises.push(axios(`${uri}${category}s/${elem}`)
       .then(response => this.state.searchResultFirstCategory.push(response.data)))
     });
+
+    // https://stackoverflow.com/questions/47237556/disadvantages-mutating-state-directly-and-forceupdate-vs-setstate
     axios.all(promises).then(() => this.forceUpdate())};
   }
 
@@ -103,12 +109,23 @@ class Search extends React.Component {
   }
 
   getSearchCategoryThird = () => {
+    const apis = {
+      ep1: `universe/system`,
+      ep2: elem => `universe/system/${elem}`,
+    }
+
+
     let promises = [];
     if(this.state.searchResults) {
+      console.time();
     this.state.searchResults.forEach((elem) => {
+      
       promises.push(axios(`${uri}universe/systems/${elem}`)
-      .then(response => this.state.searchResultThirdCategory.push(response.data)))});
-    axios.all(promises).then(() => this.forceUpdate())};
+      .then(response => this.state.searchResultThirdCategory.push(response.data))
+      )});
+
+    
+    axios.all(promises).then((arr) => console.timeEnd())};
   }
 
   getSearchCategoryFourth = (category) => {  
@@ -130,6 +147,7 @@ class Search extends React.Component {
         <>
          <form onSubmit={this.handleSubmit}> 
           <select onChange={this.getCategory} name="categories">
+            {/* Options can be placed in an array and mapped */}
             <option value="character">Agent</option>
             <option value="alliance">Alliance</option>
             <option value="constellation">Constellation</option>
@@ -144,11 +162,12 @@ class Search extends React.Component {
           <input type="submit" placeholder="Искать" name="submit" />
         </form>
         <div className="error-message">{this.state.ErrorMessage}</div>
+        {/* Duplication */}
         {this.state.searchResultFirstCategory.length > 0 && <SearchResults data={this.state.searchResultFirstCategory} id={this.state.searchResults} />}
         {this.state.searchResultSecondCategory.length > 0 && <SearchResults data={this.state.searchResultSecondCategory} id={this.state.searchResults} />}
         {this.state.searchResultThirdCategory.length > 0 && <SearchResults data={this.state.searchResultThirdCategory} id={this.state.searchResults} />}
         {this.state.searchResultFourthCategory.length > 0 && <SearchResults data={this.state.searchResultFourthCategory} id={this.state.searchResults} />}
-        
+        {/* Unnecessary comparison with 0 */}
         {this.state.isSubmitted && this.state.searchResultFirstCategory.length === 0 && this.state.searchResultSecondCategory.length === 0 && 
         this.state.searchResultThirdCategory.length === 0 && this.state.searchResultFourthCategory.length === 0 &&
           <div className="search-amount">По вашему запросу ничего не найдено</div>

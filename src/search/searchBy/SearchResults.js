@@ -14,6 +14,7 @@ class SearchResults extends React.Component{
     const names = this.props.data.map(oneItem => oneItem.name);
     const id = this.props.id;
     for(let i = 0; i < names.length; i++) {
+    // For constructor it's ok - but keep in mind that state must be immutable
     this.state.searchResult.push({name: names[i], id: id[i]})};
   }
 
@@ -26,9 +27,13 @@ class SearchResults extends React.Component{
       } else 
       return 0;
     })
+
+    // Same
     this.setState({searchResult: sortedList});
     this.setState({isAscending: !this.state.isAscending});
   }
+
+  // DUPLICATED
   sortNamesDesc = () => {
     let sortedList = this.state.searchResult.sort((a, b) => {
       if (a.name.toLowerCase() > b.name.toLowerCase()) {
@@ -47,6 +52,7 @@ class SearchResults extends React.Component{
 
   render() { 
     //current posts
+    // move the logic to a dedicated method
     const lastIndexOfRecord = this.state.currentPage * this.state.recordsPerPage;
     const firstIndexOfRecord = lastIndexOfRecord - this.state.recordsPerPage;
     const records = this.state.searchResult.slice(firstIndexOfRecord, lastIndexOfRecord);

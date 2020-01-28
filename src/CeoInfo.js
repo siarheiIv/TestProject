@@ -10,6 +10,7 @@ class CeoInfo extends React.Component{
   }
   async componentDidMount() {
     const {data: races} = await axios(`https://esi.evetech.net/latest/universe/races/`);
+    // better to use FIND method here
     const raceInfo= races.filter(race => {
       return race.race_id === this.props.race_id
   })
